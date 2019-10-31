@@ -24,11 +24,13 @@ public class PgPreparedStatements
         String dbUser = System.getenv("JDBC_DATABASE_USERNAME");
         String dbPass = System.getenv("JDBC_DATABASE_PASSWORD");
 
+        String prepareThreshold = args[0];
+
         try {
             con = DriverManager.getConnection(dbUrl,dbUser,dbPass);
             con.setAutoCommit(false);
             pstmt = con.prepareStatement("SELECT 1");
-            ((PgStatement) pstmt).setPrepareThreshold(0);
+            ((PgStatement) pstmt).setPrepareThreshold(Integer.parseInt(prepareThreshold));
             pstmt.setFetchSize(1);
             pstmt.executeQuery();
             pstmt.close();
@@ -39,9 +41,9 @@ public class PgPreparedStatements
             if(rs.next()) {
                 int count = rs.getInt(1);
                 if(count > 0) {
-                    System.out.println("On noes a prepared statement was created, count: " + count);
+                    System.out.println("Prepared statement was created, count: " + count);
                 } else {
-                    System.out.println("Yay no prepared statements");
+                    System.out.println("No prepared statements");
                 }
             }
         } catch (SQLException e) {
